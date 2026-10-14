@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reclaim-config
+  namespace: reclaim
+data:
+  PORT: "8080"
+  AUTH_SERVICE_PORT: "5001"
+  ITEM_SERVICE_PORT: "5002"
+  MATCHING_SERVICE_PORT: "5003"
+  CLAIM_SERVICE_PORT: "5004"
+  NOTIFICATION_SERVICE_PORT: "5005"
+  AUTH_SERVICE_URL: "http://auth-service:5001"
+  ITEM_SERVICE_URL: "http://item-service:5002"
+  MATCHING_SERVICE_URL: "http://matching-service:5003"
+  CLAIM_SERVICE_URL: "http://claim-service:5004"
+  NOTIFICATION_SERVICE_URL: "http://notification-service:5005"
+  MONGO_URI_AUTH: "mongodb://mongodb-service:27017/reclaim_auth"
+  MONGO_URI_ITEM: "mongodb://mongodb-service:27017/reclaim_item"
+  MONGO_URI_MATCHING: "mongodb://mongodb-service:27017/reclaim_matching"
+  MONGO_URI_CLAIM: "mongodb://mongodb-service:27017/reclaim_claim"
+  MONGO_URI_NOTIFICATION: "mongodb://mongodb-service:27017/reclaim_notification"

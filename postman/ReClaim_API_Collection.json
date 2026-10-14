@@ -1,0 +1,394 @@
+{
+  "info": {
+    "_postman_id": "a9182374-98c1-4235-9bf8-reclaim000001",
+    "name": "ReClaim — Microservices API Collection",
+    "description": "Complete Postman API test collection for ReClaim Smart Lost & Found Management System.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "lostItemId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "foundItemId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "claimId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Health Checks",
+      "item": [
+        {
+          "name": "Gateway Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Authentication Service",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Aarav Sharma\",\n  \"email\": \"aarav@college.edu\",\n  \"password\": \"Password@123\",\n  \"role\": \"User\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User (Saves JWT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "    pm.collectionVariables.set('token', res.token);",
+                  "    console.log('JWT Token successfully set!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"aarav@college.edu\",\n  \"password\": \"Password@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Item Service",
+      "item": [
+        {
+          "name": "Report Lost Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.item && res.item._id) {",
+                  "    pm.collectionVariables.set('lostItemId', res.item._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"Lost\",\n  \"category\": \"Electronics\",\n  \"name\": \"Dell Inspiron Laptop\",\n  \"description\": \"Silver 15-inch laptop with a blue Linux sticker\",\n  \"location\": \"Central Library 2nd Floor\",\n  \"date\": \"2026-10-10T14:30:00.000Z\",\n  \"color\": \"Silver\",\n  \"brand\": \"Dell\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"]
+            }
+          }
+        },
+        {
+          "name": "Report Found Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.item && res.item._id) {",
+                  "    pm.collectionVariables.set('foundItemId', res.item._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"Found\",\n  \"category\": \"Electronics\",\n  \"name\": \"Dell Laptop\",\n  \"description\": \"Found on the desk near reference section\",\n  \"location\": \"Central Library\",\n  \"date\": \"2026-10-10T16:00:00.000Z\",\n  \"color\": \"Silver\",\n  \"brand\": \"Dell\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"]
+            }
+          }
+        },
+        {
+          "name": "Browse All Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"]
+            }
+          }
+        },
+        {
+          "name": "Search Items with Filters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items?type=Lost&category=Electronics&keyword=Dell",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"],
+              "query": [
+                { "key": "type", "value": "Lost" },
+                { "key": "category", "value": "Electronics" },
+                { "key": "keyword", "value": "Dell" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Item By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{lostItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items", "{{lostItemId}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Item Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Resolved\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{lostItemId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items", "{{lostItemId}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Matching Service",
+      "item": [
+        {
+          "name": "Get Smart Matches for Lost Item",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/matches/{{lostItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "matches", "{{lostItemId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Claim Service",
+      "item": [
+        {
+          "name": "Submit Claim for Item",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.claim && res.claim._id) {",
+                  "    pm.collectionVariables.set('claimId', res.claim._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemId\": \"{{foundItemId}}\",\n  \"proofDescription\": \"My laptop has an Arch Linux sticker on the bottom and serial number ending in 8492.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/claims",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "claims"]
+            }
+          }
+        },
+        {
+          "name": "Get My Claims",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/claims/my-claims",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "claims", "my-claims"]
+            }
+          }
+        },
+        {
+          "name": "Get All Claims (Admin/Reporter)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/claims",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "claims"]
+            }
+          }
+        },
+        {
+          "name": "Update Claim Status (Approve/Reject)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/claims/{{claimId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "claims", "{{claimId}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Notification Service",
+      "item": [
+        {
+          "name": "Get My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications"]
+            }
+          }
+        },
+        {
+          "name": "Create Notification (Internal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"USER_ID_HERE\",\n  \"title\": \"Claim Approved\",\n  \"message\": \"Your claim for the Dell Laptop has been verified and approved!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "notifications"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

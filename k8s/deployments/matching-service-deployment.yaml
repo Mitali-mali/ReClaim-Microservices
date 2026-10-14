@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matching-service
+  namespace: reclaim
+  labels:
+    app: matching-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching-service
+  template:
+    metadata:
+      labels:
+        app: matching-service
+    spec:
+      containers:
+      - name: matching-service
+        image: reclaim-matching-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5003
+        envFrom:
+        - configMapRef:
+            name: reclaim-config
+        - secretRef:
+            name: reclaim-secret
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5003
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5003
+          initialDelaySeconds: 5
+          periodSeconds: 5

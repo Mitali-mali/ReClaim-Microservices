@@ -1,0 +1,123 @@
+openapi: 3.0.3
+info:
+  title: ReClaim API Gateway
+  description: OpenAPI 3.0 specification for ReClaim Smart Lost & Found Microservices
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local API Gateway
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Service is healthy
+  /api/auth/register:
+    post:
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '201':
+          description: User registered
+  /api/auth/login:
+    post:
+      summary: Login user and receive JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Login successful
+  /api/items:
+    get:
+      summary: Browse and search items
+      parameters:
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: keyword
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of items
+    post:
+      summary: Report a lost or found item
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type: { type: string, enum: [Lost, Found] }
+                category: { type: string }
+                name: { type: string }
+                location: { type: string }
+                date: { type: string, format: date-time }
+      responses:
+        '201':
+          description: Item reported
+  /api/matches/{itemId}:
+    get:
+      summary: Calculate and fetch smart matches for an item
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: List of potential matches with scores and reasons
+  /api/claims:
+    post:
+      summary: Submit a claim for an item
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                itemId: { type: string }
+                proofDescription: { type: string }
+      responses:
+        '201':
+          description: Claim submitted
+  /api/notifications:
+    get:
+      summary: Get user notifications
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of notifications
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

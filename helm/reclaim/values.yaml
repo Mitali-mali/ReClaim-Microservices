@@ -1,0 +1,49 @@
+# Default values for ReClaim Helm Chart.
+# This is a YAML-formatted file.
+
+replicaCount: 1
+
+image:
+  repositoryPrefix: "reclaim"
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+jwt:
+  secret: "super_secret_development_key"
+
+mongodb:
+  image: "mongo:6"
+  port: 27017
+
+gateway:
+  port: 8080
+  nodePort: 30080
+
+frontend:
+  port: 80
+  nodePort: 30000
+
+services:
+  auth:
+    name: auth-service
+    port: 5001
+  item:
+    name: item-service
+    port: 5002
+  matching:
+    name: matching-service
+    port: 5003
+  claim:
+    name: claim-service
+    port: 5004
+  notification:
+    name: notification-service
+    port: 5005
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

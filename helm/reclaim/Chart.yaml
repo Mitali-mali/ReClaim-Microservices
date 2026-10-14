@@ -1,0 +1,15 @@
+apiVersion: v2
+name: reclaim
+description: A Helm chart for ReClaim - Smart Lost & Found Management System Microservices
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - microservices
+  - lost-and-found
+  - nodejs
+  - react
+  - kubernetes
+maintainers:
+  - name: BTech CSE Student
+    email: student@college.edu

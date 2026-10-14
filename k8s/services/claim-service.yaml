@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: claim-service
+  namespace: reclaim
+  labels:
+    app: claim-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5004
+    targetPort: 5004
+  selector:
+    app: claim-service

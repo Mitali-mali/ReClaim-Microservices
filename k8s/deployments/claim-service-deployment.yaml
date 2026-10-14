@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: claim-service
+  namespace: reclaim
+  labels:
+    app: claim-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: claim-service
+  template:
+    metadata:
+      labels:
+        app: claim-service
+    spec:
+      containers:
+      - name: claim-service
+        image: reclaim-claim-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5004
+        envFrom:
+        - configMapRef:
+            name: reclaim-config
+        - secretRef:
+            name: reclaim-secret
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5004
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5004
+          initialDelaySeconds: 5
+          periodSeconds: 5
