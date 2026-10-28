@@ -13,22 +13,22 @@ const Navigation = () => {
   };
 
   return (
-    <Navbar bg="dark" variant="dark" expand="lg">
+    <Navbar bg="dark" variant="dark" expand="lg" className="shadow-sm">
       <Container>
-        <Navbar.Brand as={Link} to="/">ReClaim</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/" className="fw-bold text-info">ReClaim</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/">Home</Nav.Link>
-            {user && <Nav.Link as={Link} to="/browse">Browse Items</Nav.Link>}
-            {user && <Nav.Link as={Link} to="/report">Report Item</Nav.Link>}
-            {user && <Nav.Link as={Link} to="/claims">My Claims</Nav.Link>}
+            <Nav.Link as={Link} to="/browse">Browse Items</Nav.Link>
+            <Nav.Link as={Link} to="/report">Report Item</Nav.Link>
+            <Nav.Link as={Link} to="/claims">My Claims</Nav.Link>
+            <Nav.Link as={Link} to="/notifications">Alerts</Nav.Link>
           </Nav>
           <Nav>
             {user ? (
               <>
-                <Nav.Link as={Link} to="/notifications">Alerts</Nav.Link>
-                <Navbar.Text className="me-3 ms-2">Hi, {user.name}</Navbar.Text>
+                <Navbar.Text className="me-3">Hi, {user.name || 'Mitali'}</Navbar.Text>
                 <Button variant="outline-light" size="sm" onClick={handleLogout}>Logout</Button>
               </>
             ) : (
